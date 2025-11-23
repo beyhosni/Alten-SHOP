@@ -4,7 +4,7 @@
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.1.0-brightgreen?style=flat&logo=spring)
 ![Angular](https://img.shields.io/badge/Angular-18-red?style=flat&logo=angular)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker)
-![License](https://img.shields.io/badge/License-Apache%202.0-blue?style=flat)
+
 
 Application e-commerce complète développée pour Alten, avec un backend Spring Boot et un frontend Angular.
 

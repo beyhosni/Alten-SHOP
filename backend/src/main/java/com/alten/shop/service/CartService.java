@@ -48,7 +48,6 @@ public class CartService {
             // Update quantity
             CartItem item = existingItem.get();
             item.setQuantity(item.getQuantity() + request.getQuantity());
-            cartItemRepository.save(item);
         } else {
             // Add new item
             CartItem newItem = CartItem.builder()
@@ -56,7 +55,6 @@ public class CartService {
                     .product(product)
                     .quantity(request.getQuantity())
                     .build();
-            cart.addItem(newItem);
             cartItemRepository.save(newItem);
         }
 

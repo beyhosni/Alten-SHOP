@@ -1,1 +1,22 @@
-<p>navbar works!</p>
+<div class="flex justify-content-between align-items-center px-5 py-3 surface-card shadow-2 mb-4">
+    <div class="flex align-items-center gap-4">
+        <a routerLink="/" class="text-2xl font-bold text-900 no-underline">Alten Shop</a>
+        <div class="hidden md:flex gap-3">
+            <a routerLink="/products" routerLinkActive="text-primary font-bold"
+                class="text-700 hover:text-900 no-underline cursor-pointer transition-colors transition-duration-150">Products</a>
+            <a routerLink="/contact" routerLinkActive="text-primary font-bold"
+                class="text-700 hover:text-900 no-underline cursor-pointer transition-colors transition-duration-150">Contact</a>
+        </div>
+    </div>
+    <div class="flex align-items-center gap-3">
+        <button pButton icon="pi pi-shopping-cart" class="p-button-rounded p-button-text p-button-lg"
+            routerLink="/cart">
+            <p-badge *ngIf="cartCount() > 0" [value]="cartCount().toString()" severity="danger" class="absolute"
+                style="top: 0; right: 0"></p-badge>
+        </button>
+        <div class="flex align-items-center gap-2">
+            <span class="text-sm font-semibold">User</span>
+            <i class="pi pi-user text-xl"></i>
+        </div>
+    </div>
+</div>

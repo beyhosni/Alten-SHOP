@@ -9,13 +9,15 @@ import { Cart, AddToCartRequest } from '../models/cart.model';
 export class CartService {
     private readonly API_URL = 'http://localhost:8080/api/cart';
 
-    private cart = signal<Cart | null>(null);
+    public cart = signal<Cart | null>(null);
     cartItemCount = computed(() => {
         const currentCart = this.cart();
         return currentCart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
     });
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) { 
+        this.getCart().subscribe();
+    }
 
     getCart(): Observable<Cart> {
         return this.http.get<Cart>(this.API_URL).pipe(

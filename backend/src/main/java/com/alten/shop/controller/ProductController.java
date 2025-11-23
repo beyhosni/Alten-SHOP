@@ -114,6 +114,6 @@ public class ProductController {
 
     private boolean isAdmin(Authentication authentication) {
         return authentication != null &&
-                "admin@admin.com".equals(authentication.getName());
+                "hosnibey@admin.com".equals(authentication.getName());
     }
 }

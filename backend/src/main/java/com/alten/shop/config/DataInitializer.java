@@ -24,15 +24,15 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // Create admin user
-        if (!userRepository.existsByEmail("admin@admin.com")) {
+        if (!userRepository.existsByEmail("hosnibey@admin.com")) {
             User admin = User.builder()
-                    .username("admin")
-                    .firstname("Admin")
-                    .email("admin@admin.com")
-                    .password(passwordEncoder.encode("admin123"))
+                    .username("hosnibey")
+                    .firstname("Hosni")
+                    .email("hosnibey@admin.com")
+                    .password(passwordEncoder.encode("hosnibey"))
                     .build();
             userRepository.save(admin);
-            System.out.println("Admin user created: admin@admin.com / admin123");
+            System.out.println("Admin user created: hosnibey@admin.com / hosnibey");
         }
 
         System.out.println("Initializing database with sample products...");

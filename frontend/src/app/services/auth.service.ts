@@ -43,7 +43,7 @@ export class AuthService {
 
     isAdmin(): boolean {
         const user = this.currentUser();
-        return user?.email === 'admin@admin.com';
+        return user?.email === 'hosnibey@admin.com';
     }
 
     private handleAuthResponse(response: AuthResponse): void {

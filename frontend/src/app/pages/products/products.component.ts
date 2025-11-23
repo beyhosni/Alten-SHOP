@@ -57,7 +57,13 @@ export class ProductsComponent implements OnInit {
   addToCart(product: Product) {
     if (product.id) {
       this.cartService.addToCart({ productId: product.id, quantity: 1 }).subscribe({
-        next: () => console.log('Added to cart'),
+        next: () => {
+          console.log('Added to cart');
+          // Mettre à jour la quantity locale du produit
+          product.quantity = Math.max(0, product.quantity - 1);
+          // Rafraîchir les produits pour s'assurer que les changements sont à jour
+          this.loadProducts(this.first / this.rows, this.rows);
+        },
         error: (err) => console.error('Error adding to cart', err)
       });
     }

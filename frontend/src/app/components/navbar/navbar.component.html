@@ -12,11 +12,16 @@
         <button pButton icon="pi pi-shopping-cart" class="p-button-rounded p-button-text p-button-lg"
             routerLink="/cart">
             <p-badge *ngIf="cartCount() > 0" [value]="cartCount().toString()" severity="danger" class="absolute"
-                style="top: 0; right: 0"></p-badge>
+                [style]="{'top': '0', 'right': '0'}"></p-badge>
         </button>
-        <div class="flex align-items-center gap-2">
-            <span class="text-sm font-semibold">User</span>
-            <i class="pi pi-user text-xl"></i>
+        <div class="flex align-items-center gap-2" *ngIf="currentUser()">
+            <button pButton 
+                [label]="currentUser()?.firstname || 'User'" 
+                icon="pi pi-user" 
+                class="p-button-text p-button-sm"
+                (click)="op.toggle($event)">
+            </button>
+            <p-menu #op [model]="menuItems" [popup]="true"></p-menu>
         </div>
     </div>
 </div>

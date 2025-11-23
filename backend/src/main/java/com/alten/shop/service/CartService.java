@@ -55,6 +55,7 @@ public class CartService {
                     .product(product)
                     .quantity(request.getQuantity())
                     .build();
+            cart.addItem(newItem);
             cartItemRepository.save(newItem);
         }
 

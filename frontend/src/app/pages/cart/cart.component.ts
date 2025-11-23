@@ -31,14 +31,14 @@ export class CartComponent implements OnInit {
   }
 
   updateQuantity(item: CartItem, quantity: number) {
-    if (item.product.id) {
-      this.cartService.updateQuantity(item.product.id, quantity).subscribe();
+    if (item.id) {
+      this.cartService.updateQuantity(item.id, quantity).subscribe();
     }
   }
 
   removeItem(item: CartItem) {
-    if (item.product.id) {
-      this.cartService.removeItem(item.product.id).subscribe();
+    if (item.id) {
+      this.cartService.removeItem(item.id).subscribe();
     }
   }
 

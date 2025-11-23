@@ -1,4 +1,93 @@
 <div class="card">
+    <!-- Filters Section -->
+    <div class="surface-section p-4 mb-4 border-round border-1 surface-border">
+        <h3 class="text-xl font-bold mb-4">Filters</h3>
+        
+        <div class="grid gap-4">
+            <!-- Search Bar -->
+            <div class="col-12 md:col-6 lg:col-3">
+                <label for="search" class="block text-sm font-semibold mb-2">Search</label>
+                <input type="text" 
+                    id="search"
+                    class="w-full p-2 border-1 surface-border border-round"
+                    placeholder="Search products..."
+                    [(ngModel)]="searchText"
+                    (keyup.enter)="onFilterChange()" />
+            </div>
+
+            <!-- Category Filter -->
+            <div class="col-12 md:col-6 lg:col-3">
+                <label for="category" class="block text-sm font-semibold mb-2">Category</label>
+                <p-dropdown 
+                    #categoryDropdown
+                    [options]="categories()" 
+                    [(ngModel)]="selectedCategory"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Select a category"
+                    (onChange)="onFilterChange()"
+                    class="w-full">
+                </p-dropdown>
+            </div>
+
+            <!-- Min Price -->
+            <div class="col-12 md:col-6 lg:col-3">
+                <label for="minPrice" class="block text-sm font-semibold mb-2">Min Price</label>
+                <p-inputNumber 
+                    id="minPrice"
+                    [(ngModel)]="minPrice"
+                    [min]="0"
+                    [max]="10000"
+                    currency="USD"
+                    currencyDisplay="symbol"
+                    placeholder="Min price"
+                    (onBlur)="onFilterChange()"
+                    class="w-full">
+                </p-inputNumber>
+            </div>
+
+            <!-- Max Price -->
+            <div class="col-12 md:col-6 lg:col-3">
+                <label for="maxPrice" class="block text-sm font-semibold mb-2">Max Price</label>
+                <p-inputNumber 
+                    id="maxPrice"
+                    [(ngModel)]="maxPrice"
+                    [min]="0"
+                    [max]="10000"
+                    currency="USD"
+                    currencyDisplay="symbol"
+                    placeholder="Max price"
+                    (onBlur)="onFilterChange()"
+                    class="w-full">
+                </p-inputNumber>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-2 mt-4">
+            <button pButton 
+                type="button"
+                label="Search" 
+                icon="pi pi-search"
+                class="p-button-primary"
+                (click)="onFilterChange()">
+            </button>
+            <button pButton 
+                type="button"
+                label="Reset Filters" 
+                icon="pi pi-times"
+                class="p-button-secondary"
+                (click)="resetFilters()">
+            </button>
+        </div>
+    </div>
+
+    <!-- Results Count -->
+    <div class="mb-3 text-sm text-600">
+        <strong>{{ totalRecords }}</strong> product(s) found
+    </div>
+
+    <!-- Products List -->
     <p-dataView #dv [value]="products()" [paginator]="true" [rows]="rows" [first]="first" [lazy]="true"
         (onPage)="onPageChange($event)" [totalRecords]="totalRecords" layout="list">
         <ng-template pTemplate="list" let-products>

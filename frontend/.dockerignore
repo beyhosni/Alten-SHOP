@@ -1,0 +1,12 @@
+# Frontend .dockerignore
+node_modules/
+dist/
+.angular/
+coverage/
+.git/
+.gitignore
+*.md
+.vscode/
+.idea/
+*.log
+e2e/

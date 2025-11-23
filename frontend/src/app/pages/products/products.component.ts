@@ -30,6 +30,11 @@ export class ProductsComponent implements OnInit {
 
   ngOnInit() {
     this.loadProducts(0, this.rows);
+    
+    // Listen for cart changes to refresh products
+    this.cartService.cartChanged$.subscribe(() => {
+      this.loadProducts(this.first / this.rows, this.rows);
+    });
   }
 
   loadProducts(page: number, size: number) {
@@ -59,10 +64,7 @@ export class ProductsComponent implements OnInit {
       this.cartService.addToCart({ productId: product.id, quantity: 1 }).subscribe({
         next: () => {
           console.log('Added to cart');
-          // Mettre à jour la quantity locale du produit
-          product.quantity = Math.max(0, product.quantity - 1);
-          // Rafraîchir les produits pour s'assurer que les changements sont à jour
-          this.loadProducts(this.first / this.rows, this.rows);
+          // Product quantity will be updated automatically via cartChanged$ subscription
         },
         error: (err) => console.error('Error adding to cart', err)
       });

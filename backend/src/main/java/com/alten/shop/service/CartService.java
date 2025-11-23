@@ -59,11 +59,15 @@ public class CartService {
             cartItemRepository.save(newItem);
         }
 
+        // Deduct quantity from product inventory
+        product.setQuantity(Math.max(0, product.getQuantity() - request.getQuantity()));
+        productRepository.save(product);
+
         return cartRepository.save(cart);
     }
 
     @Transactional
-    public Cart updateCartItemQuantity(String userEmail, Long itemId, Integer quantity) {
+    public Cart updateCartItemQuantity(String userEmail, Long itemId, Integer newQuantity) {
         Cart cart = getOrCreateCart(userEmail);
         CartItem item = cartItemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
@@ -72,7 +76,15 @@ public class CartService {
             throw new RuntimeException("Cart item does not belong to user");
         }
 
-        item.setQuantity(quantity);
+        // Calculate the difference to adjust product quantity
+        int quantityDifference = item.getQuantity() - newQuantity;
+        if (quantityDifference != 0) {
+            Product product = item.getProduct();
+            product.setQuantity(product.getQuantity() + quantityDifference);
+            productRepository.save(product);
+        }
+
+        item.setQuantity(newQuantity);
         cartItemRepository.save(item);
         return cart;
     }
@@ -86,6 +98,11 @@ public class CartService {
         if (!item.getCart().getId().equals(cart.getId())) {
             throw new RuntimeException("Cart item does not belong to user");
         }
+
+        // Restore product quantity
+        Product product = item.getProduct();
+        product.setQuantity(product.getQuantity() + item.getQuantity());
+        productRepository.save(product);
 
         cart.removeItem(item);
         cartItemRepository.delete(item);

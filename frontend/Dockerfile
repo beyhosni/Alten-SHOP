@@ -14,8 +14,8 @@ RUN npm run build -- --configuration production
 # Runtime stage with nginx
 FROM nginx:alpine
 
-# Copy built app to nginx
-COPY --from=build /app/dist/frontend/browser /usr/share/nginx/html
+# Copy built app to nginx (Angular 18 outputs to dist/frontend)
+COPY --from=build /app/dist/frontend /usr/share/nginx/html
 
 # Copy custom nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf

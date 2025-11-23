@@ -180,10 +180,4 @@ docker-compose down -v --rmi all
 4. Push (`git push origin feature/AmazingFeature`)
 5. Ouvrir une Pull Request
 
-## 📄 Licence
 
-Ce projet est sous licence MIT.
-
----
-
-**Développé avec ❤️ pour Alten**

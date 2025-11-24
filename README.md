@@ -51,8 +51,7 @@ docker-compose up --build
 
 - **[DOCKER-GUIDE.md](DOCKER-GUIDE.md)** - Guide complet Docker
 - **[POSTMAN-GUIDE.md](POSTMAN-GUIDE.md)** - Guide collection Postman
-- **[Backend Walkthrough](walkthrough.md)** - Documentation backend
-- **[Frontend Walkthrough](frontend-walkthrough.md)** - Documentation frontend
+
 
 ## 🧪 Tests avec Postman
 

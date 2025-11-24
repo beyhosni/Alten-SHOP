@@ -172,12 +172,6 @@ docker-compose down -v --rmi all
 - CORS configuré pour localhost:4200
 - Swagger accessible sans authentification
 
-## 🤝 Contribution
 
-1. Fork le projet
-2. Créer une branche (`git checkout -b feature/AmazingFeature`)
-3. Commit (`git commit -m 'Add AmazingFeature'`)
-4. Push (`git push origin feature/AmazingFeature`)
-5. Ouvrir une Pull Request
 
 

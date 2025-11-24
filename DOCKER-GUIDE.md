@@ -299,28 +299,7 @@ docker-compose up -d --build frontend
 docker-compose up -d --build
 ```
 
-## 📈 Performance
 
-### Temps de Build
-
-| Service | Première fois | Cache |
-|---------|---------------|-------|
-| Backend | ~5 min | ~1 min |
-| Frontend | ~3 min | ~30 sec |
-
-### Taille des Images
-
-| Image | Taille |
-|-------|--------|
-| Backend | ~200 MB |
-| Frontend | ~50 MB |
-
-### Utilisation Ressources
-
-| Service | CPU | RAM |
-|---------|-----|-----|
-| Backend | ~10% | ~512 MB |
-| Frontend | ~1% | ~50 MB |
 
 ## 💡 Bonnes Pratiques
 

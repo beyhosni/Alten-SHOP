@@ -116,4 +116,21 @@ public class CartService {
         cart.getItems().clear();
         cartRepository.save(cart);
     }
+
+    @Transactional
+    public void checkout(String userEmail) {
+        Cart cart = getOrCreateCart(userEmail);
+
+        if (cart.getItems().isEmpty()) {
+            throw new RuntimeException("Cannot checkout with an empty cart");
+        }
+
+        // In a real application, you would create an order here
+        // For now, we just clear the cart since the inventory has already been updated
+        // when items were added to the cart
+
+        cartItemRepository.deleteByCartId(cart.getId());
+        cart.getItems().clear();
+        cartRepository.save(cart);
+    }
 }

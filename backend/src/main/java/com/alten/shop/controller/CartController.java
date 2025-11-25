@@ -53,4 +53,10 @@ public class CartController {
         cartService.clearCart(authentication.getName());
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/checkout")
+    public ResponseEntity<String> checkout(Authentication authentication) {
+        cartService.checkout(authentication.getName());
+        return ResponseEntity.ok("Order placed successfully");
+    }
 }

@@ -52,7 +52,8 @@ export class ProductsComponent implements OnInit {
         
         // Listen for cart changes to refresh products
         this.cartService.cartChanged$.subscribe(() => {
-          this.applyFiltersAndPaginate();
+          // Reload products from backend to get updated quantities
+          this.loadAllProducts();
         });
       },
       error: (err) => console.error('Error loading products', err)

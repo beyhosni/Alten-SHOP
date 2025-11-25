@@ -45,4 +45,17 @@ export class CartComponent implements OnInit {
   clearCart() {
     this.cartService.clearCart().subscribe();
   }
+
+  checkout() {
+    this.cartService.checkout().subscribe({
+      next: (response) => {
+        // Afficher un message de succès à l'utilisateur
+        alert('Order placed successfully! Thank you for your purchase.');
+      },
+      error: (error) => {
+        // Afficher un message d'erreur à l'utilisateur
+        alert('Error placing order: ' + error.message);
+      }
+    });
+  }
 }

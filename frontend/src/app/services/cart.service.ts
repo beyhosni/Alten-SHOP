@@ -68,4 +68,13 @@ export class CartService {
     refreshCart(): void {
         this.getCart().subscribe();
     }
+
+    checkout(): Observable<string> {
+        return this.http.post<string>(`${this.API_URL}/checkout`, {}).pipe(
+            tap(() => {
+                this.cart.set(null);
+                this.cartChanged$.next();
+            })
+        );
+    }
 }

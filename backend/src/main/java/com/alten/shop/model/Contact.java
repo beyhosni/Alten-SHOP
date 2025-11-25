@@ -7,7 +7,6 @@ import lombok.*;
 @Entity
 @Table(name = "contacts")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Contact {
@@ -28,6 +27,10 @@ public class Contact {
 
     @Column(nullable = false, updatable = false)
     private Long createdAt;
+
+    public Contact() {
+        this.createdAt = System.currentTimeMillis();
+    }
 
     @PrePersist
     protected void onCreate() {

@@ -7,7 +7,6 @@ import lombok.*;
 @Entity
 @Table(name = "products")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Product {
@@ -59,6 +58,11 @@ public class Product {
 
     @Column(nullable = false)
     private Long updatedAt;
+
+    public Product() {
+        this.createdAt = System.currentTimeMillis();
+        this.updatedAt = System.currentTimeMillis();
+    }
 
     @PrePersist
     protected void onCreate() {

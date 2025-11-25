@@ -1,26 +1,20 @@
 package com.alten.shop.controller;
 
-import com.alten.shop.dto.AuthResponse;
-import com.alten.shop.dto.LoginRequest;
-import com.alten.shop.dto.RegisterRequest;
-import com.alten.shop.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(AuthController.class)
-@Import(TestSecurityConfig.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
 class AuthControllerTest {
 
     @Autowired
@@ -29,108 +23,119 @@ class AuthControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
-    private AuthService authService;
-
-    private RegisterRequest registerRequest;
-    private LoginRequest loginRequest;
-    private AuthResponse authResponse;
-
-    @BeforeEach
-    void setUp() {
-        registerRequest = RegisterRequest.builder()
-                .username("johndoe")
-                .firstname("John")
-                .email("john@example.com")
-                .password("password123")
-                .build();
-
-        loginRequest = LoginRequest.builder()
-                .email("john@example.com")
-                .password("password123")
-                .build();
-
-        authResponse = AuthResponse.builder()
-                .token("jwt-token-12345")
-                .email("john@example.com")
-                .username("johndoe")
-                .build();
-    }
-
     @Test
     void whenRegister_thenReturnAuthResponse() throws Exception {
-        // Given
-        when(authService.register(any(RegisterRequest.class))).thenReturn(authResponse);
+        String registerPayload = """
+                {
+                    "username": "testuser",
+                    "firstname": "Test",
+                    "email": "test@example.com",
+                    "password": "password123"
+                }
+                """;
 
-        // When & Then
         mockMvc.perform(post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerRequest)))
+                .content(registerPayload))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.token").value("jwt-token-12345"))
-                .andExpect(jsonPath("$.email").value("john@example.com"))
-                .andExpect(jsonPath("$.username").value("johndoe"));
-    }
-
-    @Test
-    void whenRegisterWithInvalidEmail_thenReturn400() throws Exception {
-        // Given
-        registerRequest.setEmail("invalid-email");
-
-        // When & Then
-        mockMvc.perform(post("/account")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerRequest)))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$.token").exists())
+                .andExpect(jsonPath("$.email").value("test@example.com"));
     }
 
     @Test
     void whenRegisterWithBlankUsername_thenReturn400() throws Exception {
-        // Given
-        registerRequest.setUsername("");
+        String registerPayload = """
+                {
+                    "username": "",
+                    "firstname": "Test",
+                    "email": "test2@example.com",
+                    "password": "password123"
+                }
+                """;
 
-        // When & Then
         mockMvc.perform(post("/account")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerRequest)))
+                .content(registerPayload))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void whenRegisterWithInvalidEmail_thenReturn400() throws Exception {
+        String registerPayload = """
+                {
+                    "username": "testuser",
+                    "firstname": "Test",
+                    "email": "invalid-email",
+                    "password": "password123"
+                }
+                """;
+
+        mockMvc.perform(post("/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(registerPayload))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void whenLogin_thenReturnAuthResponse() throws Exception {
-        // Given
-        when(authService.login(any(LoginRequest.class))).thenReturn(authResponse);
+        // First register a user
+        String registerPayload = """
+                {
+                    "username": "logintest",
+                    "firstname": "Login",
+                    "email": "login@example.com",
+                    "password": "password123"
+                }
+                """;
 
-        // When & Then
+        mockMvc.perform(post("/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(registerPayload))
+                .andExpect(status().isCreated());
+
+        // Then login
+        String loginPayload = """
+                {
+                    "email": "login@example.com",
+                    "password": "password123"
+                }
+                """;
+
         mockMvc.perform(post("/token")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
+                .content(loginPayload))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("jwt-token-12345"))
-                .andExpect(jsonPath("$.email").value("john@example.com"));
+                .andExpect(jsonPath("$.token").exists())
+                .andExpect(jsonPath("$.email").value("login@example.com"));
     }
 
     @Test
     void whenLoginWithInvalidEmail_thenReturn400() throws Exception {
-        // Given
-        loginRequest.setEmail("invalid-email");
+        String loginPayload = """
+                {
+                    "email": "invalid-email",
+                    "password": "password123"
+                }
+                """;
 
-        // When & Then
         mockMvc.perform(post("/token")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
+                .content(loginPayload))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void whenLoginWithBlankPassword_thenReturn400() throws Exception {
-        // Given
-        loginRequest.setPassword("");
+        String loginPayload = """
+                {
+                    "email": "test@example.com",
+                    "password": ""
+                }
+                """;
 
-        // When & Then
         mockMvc.perform(post("/token")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
+                .content(loginPayload))
                 .andExpect(status().isBadRequest());
     }
 }

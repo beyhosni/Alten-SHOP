@@ -16,6 +16,9 @@ FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
+# Install curl for health check
+RUN apk add --no-cache curl
+
 # Copy jar from build stage
 COPY --from=build /app/target/*.jar app.jar
 

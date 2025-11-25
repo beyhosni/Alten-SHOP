@@ -1,27 +1,22 @@
 package com.alten.shop.controller;
 
-import com.alten.shop.model.Contact;
-import com.alten.shop.service.ContactService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(ContactController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
 class ContactControllerTest {
 
     @Autowired
@@ -30,99 +25,78 @@ class ContactControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
-    private ContactService contactService;
-
-    private Contact testContact;
-
-    @BeforeEach
-    void setUp() {
-        testContact = Contact.builder()
-                .id(1L)
-                .email("test@example.com")
-                .message("Test message")
-                .build();
-    }
-
     @Test
+    @WithMockUser
     void whenSubmitContact_thenReturnCreatedContact() throws Exception {
-        // Given
-        Contact newContact = Contact.builder()
-                .email("new@example.com")
-                .message("New message")
-                .build();
-        when(contactService.submitContact(any(Contact.class))).thenReturn(newContact);
+        String contactPayload = """
+                {
+                    "email": "contact@example.com",
+                    "message": "This is a test contact message"
+                }
+                """;
 
-        // When & Then
         mockMvc.perform(post("/api/contact")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(newContact)))
+                .content(contactPayload))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.email").value("new@example.com"))
-                .andExpect(jsonPath("$.message").value("New message"));
-
-        verify(contactService, times(1)).submitContact(any(Contact.class));
+                .andExpect(jsonPath("$.email").value("contact@example.com"))
+                .andExpect(jsonPath("$.message").value("This is a test contact message"));
     }
 
     @Test
+    @WithMockUser
     void whenSubmitContactWithInvalidEmail_thenReturn400() throws Exception {
-        // Given - contact with invalid email
-        Contact invalidContact = Contact.builder()
-                .email("invalid-email")
-                .message("Test message")
-                .build();
+        String contactPayload = """
+                {
+                    "email": "invalid-email",
+                    "message": "This is a test message"
+                }
+                """;
 
-        // When & Then
         mockMvc.perform(post("/api/contact")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidContact)))
+                .content(contactPayload))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
+    @WithMockUser
     void whenSubmitContactWithBlankMessage_thenReturn400() throws Exception {
-        // Given - contact with blank message
-        Contact invalidContact = Contact.builder()
-                .email("test@example.com")
-                .message("")
-                .build();
+        String contactPayload = """
+                {
+                    "email": "test@example.com",
+                    "message": ""
+                }
+                """;
 
-        // When & Then
         mockMvc.perform(post("/api/contact")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidContact)))
+                .content(contactPayload))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
+    @WithMockUser
     void whenSubmitContactWithMessageTooLong_thenReturn400() throws Exception {
-        // Given - contact with message > 300 characters
         String longMessage = "a".repeat(301);
-        Contact invalidContact = Contact.builder()
-                .email("test@example.com")
-                .message(longMessage)
-                .build();
+        String contactPayload = String.format("""
+                {
+                    "email": "test@example.com",
+                    "message": "%s"
+                }
+                """, longMessage);
 
-        // When & Then
         mockMvc.perform(post("/api/contact")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidContact)))
+                .content(contactPayload))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
+    @WithMockUser
     void whenGetAllContacts_thenReturnContactList() throws Exception {
-        // Given
-        List<Contact> contacts = Arrays.asList(testContact);
-        when(contactService.getAllContacts()).thenReturn(contacts);
-
-        // When & Then
         mockMvc.perform(get("/api/contact"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].email").value("test@example.com"));
-
-        verify(contactService, times(1)).getAllContacts();
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 }

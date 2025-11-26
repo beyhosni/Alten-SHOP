@@ -49,12 +49,12 @@ class ShopApplicationE2ETest {
                 productRepository.deleteAll();
 
                 // Register user
-                RegisterRequest registerRequest = RegisterRequest.builder()
-                                .username("testuser")
-                                .firstname("Test")
-                                .email("e2e@test.com")
-                                .password("password123")
-                                .build();
+                RegisterRequest registerRequest = new RegisterRequest(
+                                "testuser",
+                                "Test",
+                                "e2e@test.com",
+                                "password123"
+                );
 
                 mockMvc.perform(post("/account")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -62,10 +62,10 @@ class ShopApplicationE2ETest {
                                 .andExpect(status().isCreated());
 
                 // Login
-                LoginRequest loginRequest = LoginRequest.builder()
-                                .email("e2e@test.com")
-                                .password("password123")
-                                .build();
+                LoginRequest loginRequest = new LoginRequest(
+                                "e2e@test.com",
+                                "password123"
+                );
 
                 MvcResult result = mockMvc.perform(post("/token")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -103,12 +103,12 @@ class ShopApplicationE2ETest {
                 @Test
                 @DisplayName("Register new user successfully")
                 void registerNewUserSuccessfully() throws Exception {
-                        RegisterRequest registerRequest = RegisterRequest.builder()
-                                        .username("newuser")
-                                        .firstname("New")
-                                        .email("newuser@test.com")
-                                        .password("password456")
-                                        .build();
+                        RegisterRequest registerRequest = new RegisterRequest(
+                                        "newuser",
+                                        "New",
+                                        "newuser@test.com",
+                                        "password456"
+                        );
 
                         mockMvc.perform(post("/account")
                                         .contentType(MediaType.APPLICATION_JSON)
@@ -120,12 +120,12 @@ class ShopApplicationE2ETest {
                 @Test
                 @DisplayName("Register with duplicate email should fail")
                 void registerWithDuplicateEmailShouldFail() throws Exception {
-                        RegisterRequest registerRequest = RegisterRequest.builder()
-                                        .username("duplicateuser")
-                                        .firstname("Duplicate")
-                                        .email("e2e@test.com")
-                                        .password("password123")
-                                        .build();
+                        RegisterRequest registerRequest = new RegisterRequest(
+                                        "duplicateuser",
+                                        "Duplicate",
+                                        "e2e@test.com",
+                                        "password123"
+                        );
 
                         mockMvc.perform(post("/account")
                                         .contentType(MediaType.APPLICATION_JSON)
@@ -136,10 +136,10 @@ class ShopApplicationE2ETest {
                 @Test
                 @DisplayName("Login with correct credentials")
                 void loginWithCorrectCredentials() throws Exception {
-                        LoginRequest loginRequest = LoginRequest.builder()
-                                        .email("e2e@test.com")
-                                        .password("password123")
-                                        .build();
+                        LoginRequest loginRequest = new LoginRequest(
+                                        "e2e@test.com",
+                                        "password123"
+                        );
 
                         mockMvc.perform(post("/token")
                                         .contentType(MediaType.APPLICATION_JSON)
@@ -151,10 +151,10 @@ class ShopApplicationE2ETest {
                 @Test
                 @DisplayName("Login with wrong password should fail")
                 void loginWithWrongPasswordShouldFail() throws Exception {
-                        LoginRequest loginRequest = LoginRequest.builder()
-                                        .email("e2e@test.com")
-                                        .password("wrongpassword")
-                                        .build();
+                        LoginRequest loginRequest = new LoginRequest(
+                                        "e2e@test.com",
+                                        "wrongpassword"
+                        );
 
                         mockMvc.perform(post("/token")
                                         .contentType(MediaType.APPLICATION_JSON)

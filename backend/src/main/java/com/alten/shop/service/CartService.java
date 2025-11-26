@@ -38,7 +38,7 @@ public class CartService {
     @Transactional
     public Cart addToCart(String userEmail, AddToCartRequest request) {
         Cart cart = getOrCreateCart(userEmail);
-        Product product = productRepository.findById(request.getProductId())
+        Product product = productRepository.findById(request.productId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
         // Check if item already exists in cart
@@ -47,20 +47,20 @@ public class CartService {
         if (existingItem.isPresent()) {
             // Update quantity
             CartItem item = existingItem.get();
-            item.setQuantity(item.getQuantity() + request.getQuantity());
+            item.setQuantity(item.getQuantity() + request.quantity());
         } else {
             // Add new item
             CartItem newItem = CartItem.builder()
                     .cart(cart)
                     .product(product)
-                    .quantity(request.getQuantity())
+                    .quantity(request.quantity())
                     .build();
             cart.addItem(newItem);
             cartItemRepository.save(newItem);
         }
 
         // Deduct quantity from product inventory
-        product.setQuantity(Math.max(0, product.getQuantity() - request.getQuantity()));
+        product.setQuantity(Math.max(0, product.getQuantity() - request.quantity()));
         productRepository.save(product);
 
         return cartRepository.save(cart);

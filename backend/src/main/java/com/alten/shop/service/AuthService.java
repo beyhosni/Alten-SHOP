@@ -20,16 +20,16 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
         // Check if email already exists
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(request.email())) {
             throw new RuntimeException("Email already exists");
         }
 
         // Create new user
         User user = User.builder()
-                .username(request.getUsername())
-                .firstname(request.getFirstname())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .username(request.username())
+                .firstname(request.firstname())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
                 .build();
 
         userRepository.save(user);
@@ -37,30 +37,28 @@ public class AuthService {
         // Generate JWT token
         String token = jwtService.generateToken(user.getEmail());
 
-        return AuthResponse.builder()
-                .token(token)
-                .email(user.getEmail())
-                .username(user.getUsername())
-                .build();
+        return new AuthResponse(
+                token,
+                user.getEmail(),
+                user.getUsername());
     }
 
     public AuthResponse login(LoginRequest request) {
         // Find user by email
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
         // Verify password
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
 
         // Generate JWT token
         String token = jwtService.generateToken(user.getEmail());
 
-        return AuthResponse.builder()
-                .token(token)
-                .email(user.getEmail())
-                .username(user.getUsername())
-                .build();
+        return new AuthResponse(
+                token,
+                user.getEmail(),
+                user.getUsername());
     }
 }

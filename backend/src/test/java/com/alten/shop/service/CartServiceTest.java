@@ -91,9 +91,7 @@ class CartServiceTest {
 
     @Test
     void whenAddToCart_andItemIsNew_thenAddItem() {
-        AddToCartRequest request = new AddToCartRequest();
-        request.setProductId(1L);
-        request.setQuantity(2);
+        AddToCartRequest request = new AddToCartRequest(1L, 2);
 
         when(userRepository.findByEmail(testUser.getEmail())).thenReturn(Optional.of(testUser));
         when(cartRepository.findByUserId(testUser.getId())).thenReturn(Optional.of(testCart));
@@ -112,9 +110,7 @@ class CartServiceTest {
 
     @Test
     void whenAddToCart_andItemExists_thenUpdateQuantity() {
-        AddToCartRequest request = new AddToCartRequest();
-        request.setProductId(1L);
-        request.setQuantity(2);
+        AddToCartRequest request = new AddToCartRequest(1L, 2);
 
         CartItem existingItem = CartItem.builder()
                 .id(1L)

@@ -45,9 +45,7 @@ class CartControllerTest {
                 .items(new ArrayList<>())
                 .build();
 
-        addToCartRequest = new AddToCartRequest();
-        addToCartRequest.setProductId(1L);
-        addToCartRequest.setQuantity(2);
+        addToCartRequest = new AddToCartRequest(1L, 2);
     }
 
     @Test

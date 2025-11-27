@@ -53,8 +53,7 @@ class ShopApplicationE2ETest {
                                 "testuser",
                                 "Test",
                                 "e2e@test.com",
-                                "password123"
-                );
+                                "password123");
 
                 mockMvc.perform(post("/account")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -64,8 +63,7 @@ class ShopApplicationE2ETest {
                 // Login
                 LoginRequest loginRequest = new LoginRequest(
                                 "e2e@test.com",
-                                "password123"
-                );
+                                "password123");
 
                 MvcResult result = mockMvc.perform(post("/token")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -107,8 +105,7 @@ class ShopApplicationE2ETest {
                                         "newuser",
                                         "New",
                                         "newuser@test.com",
-                                        "password456"
-                        );
+                                        "password456");
 
                         mockMvc.perform(post("/account")
                                         .contentType(MediaType.APPLICATION_JSON)
@@ -124,8 +121,7 @@ class ShopApplicationE2ETest {
                                         "duplicateuser",
                                         "Duplicate",
                                         "e2e@test.com",
-                                        "password123"
-                        );
+                                        "password123");
 
                         mockMvc.perform(post("/account")
                                         .contentType(MediaType.APPLICATION_JSON)
@@ -138,8 +134,7 @@ class ShopApplicationE2ETest {
                 void loginWithCorrectCredentials() throws Exception {
                         LoginRequest loginRequest = new LoginRequest(
                                         "e2e@test.com",
-                                        "password123"
-                        );
+                                        "password123");
 
                         mockMvc.perform(post("/token")
                                         .contentType(MediaType.APPLICATION_JSON)
@@ -153,8 +148,7 @@ class ShopApplicationE2ETest {
                 void loginWithWrongPasswordShouldFail() throws Exception {
                         LoginRequest loginRequest = new LoginRequest(
                                         "e2e@test.com",
-                                        "wrongpassword"
-                        );
+                                        "wrongpassword");
 
                         mockMvc.perform(post("/token")
                                         .contentType(MediaType.APPLICATION_JSON)
@@ -197,7 +191,16 @@ class ShopApplicationE2ETest {
                 @DisplayName("Should add product to cart")
                 void shouldAddProductToCart() throws Exception {
                         // First, create a product
-                        String productJson = '{"name":"Test Product","code":"TP001","price":100.0,"quantity":10,"category":"Electronics","inventoryStatus":"INSTOCK"}";
+                        String productJson = """
+                                        {
+                                                "name": "Test Product",
+                                                "code": "TP001",
+                                                "price": 100.0,
+                                                "quantity": 10,
+                                                "category": "Electronics",
+                                                "inventoryStatus": "INSTOCK"
+                                        }
+                                        """;
 
                         MvcResult result = mockMvc.perform(post("/api/products")
                                         .header("Authorization", "Bearer " + authToken)
@@ -210,7 +213,12 @@ class ShopApplicationE2ETest {
                         Long productId = objectMapper.readTree(response).get("id").asLong();
 
                         // Add product to cart
-                        String addToCartJson = '{"productId":' + productId + ',"quantity":2}';
+                        String addToCartJson = String.format("""
+                                        {
+                                                "productId": %d,
+                                                "quantity": 2
+                                        }
+                                        """, productId);
 
                         mockMvc.perform(post("/api/cart/items")
                                         .header("Authorization", "Bearer " + authToken)
@@ -229,7 +237,16 @@ class ShopApplicationE2ETest {
                 @DisplayName("Should checkout with non-empty cart")
                 void shouldCheckoutWithNonEmptyCart() throws Exception {
                         // First, create a product
-                        String productJson = '{"name":"Test Product","code":"TP002","price":100.0,"quantity":10,"category":"Electronics","inventoryStatus":"INSTOCK"}";
+                        String productJson = """
+                                        {
+                                                "name": "Test Product",
+                                                "code": "TP002",
+                                                "price": 100.0,
+                                                "quantity": 10,
+                                                "category": "Electronics",
+                                                "inventoryStatus": "INSTOCK"
+                                        }
+                                        """;
 
                         MvcResult result = mockMvc.perform(post("/api/products")
                                         .header("Authorization", "Bearer " + authToken)
@@ -242,7 +259,12 @@ class ShopApplicationE2ETest {
                         Long productId = objectMapper.readTree(response).get("id").asLong();
 
                         // Add product to cart
-                        String addToCartJson = '{"productId":' + productId + ',"quantity":2}';
+                        String addToCartJson = String.format("""
+                                        {
+                                                "productId": %d,
+                                                "quantity": 2
+                                        }
+                                        """, productId);
 
                         mockMvc.perform(post("/api/cart/items")
                                         .header("Authorization", "Bearer " + authToken)

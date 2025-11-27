@@ -64,7 +64,7 @@ class CartControllerTest {
     @Test
     @WithMockUser(username = "test@example.com")
     void whenAddToCart_thenReturnUpdatedCart() throws Exception {
-        when(cartService.addToCart(any(AddToCartRequest.class))).thenReturn(testCart);
+        when(cartService.addToCart(eq("test@example.com"), any(AddToCartRequest.class))).thenReturn(testCart);
 
         mockMvc.perform(post("/api/cart/items")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -73,13 +73,13 @@ class CartControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(testCart.getId()));
 
-        verify(cartService).addToCart(any(AddToCartRequest.class));
+        verify(cartService).addToCart(eq("test@example.com"), any(AddToCartRequest.class));
     }
 
     @Test
     @WithMockUser(username = "test@example.com")
     void whenUpdateCartItemQuantity_thenReturnUpdatedCart() throws Exception {
-        when(cartService.updateQuantity(1L, 3)).thenReturn(testCart);
+        when(cartService.updateCartItemQuantity("test@example.com", 1L, 3)).thenReturn(testCart);
 
         mockMvc.perform(put("/api/cart/items/1")
                 .param("quantity", "3"))
@@ -87,42 +87,42 @@ class CartControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(testCart.getId()));
 
-        verify(cartService).updateQuantity(1L, 3);
+        verify(cartService).updateCartItemQuantity("test@example.com", 1L, 3);
     }
 
     @Test
     @WithMockUser(username = "test@example.com")
     void whenRemoveFromCart_thenReturnUpdatedCart() throws Exception {
-        when(cartService.removeItem(1L)).thenReturn(testCart);
+        when(cartService.removeFromCart("test@example.com", 1L)).thenReturn(testCart);
 
         mockMvc.perform(delete("/api/cart/items/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(testCart.getId()));
 
-        verify(cartService).removeItem(1L);
+        verify(cartService).removeFromCart("test@example.com", 1L);
     }
 
     @Test
     @WithMockUser(username = "test@example.com")
     void whenClearCart_thenNoContent() throws Exception {
-        doNothing().when(cartService).clearCart();
+        doNothing().when(cartService).clearCart("test@example.com");
 
         mockMvc.perform(delete("/api/cart"))
                 .andExpect(status().isNoContent());
 
-        verify(cartService).clearCart();
+        verify(cartService).clearCart("test@example.com");
     }
 
     @Test
     @WithMockUser(username = "test@example.com")
     void whenCheckout_thenReturnSuccessMessage() throws Exception {
-        doNothing().when(cartService).checkout();
+        doNothing().when(cartService).checkout("test@example.com");
 
         mockMvc.perform(post("/api/cart/checkout"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Order placed successfully"));
 
-        verify(cartService).checkout();
+        verify(cartService).checkout("test@example.com");
     }
 }
